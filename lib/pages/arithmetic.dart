@@ -74,7 +74,7 @@ class _ArithmeticPageState extends State<ArithmeticPage> {
       result = random.nextInt(upperBound - lowerBound) + lowerBound + 1;
 
       // generate one of the factors following a gaussian to be more heavily biased towards the center
-      leftSide = (Util.nextGaussian(random, mean: 0, sigma: upperBound * 1.0)).floor();
+      leftSide = (Util.nextGaussian(random, mean: 0, sigma: result * 1.0)).floor();
 
       // get the right side number
       rightSide = result - leftSide;
@@ -110,7 +110,12 @@ class _ArithmeticPageState extends State<ArithmeticPage> {
       // get its factors
       List<int> factors = Util.getFactors(result);
       // pick a random factor
-      leftSide = factors[random.nextInt(factors.length)];
+      if (factors.length > 1) {
+        leftSide = factors[random.nextInt(factors.length - 1) + 1];
+      } else {
+        leftSide = factors[0];
+      }
+      
       rightSide = result ~/ leftSide;
       return;
     }
