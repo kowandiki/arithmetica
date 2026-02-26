@@ -1,6 +1,7 @@
 
 import 'dart:math';
 
+import 'package:arithmetica/util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -69,13 +70,33 @@ class _ArithmeticPageState extends State<ArithmeticPage> {
     if (widget.operators & Operators.addition == 0) {
       operator <<= 1; // not valid operator
     } else if (operator == Operators.addition) {
-      result = leftSide + rightSide;
+      // generate random number to be the result
+      result = random.nextInt(upperBound - lowerBound) + lowerBound + 1;
+
+      // generate one of the factors following a gaussian to be more heavily biased towards the center
+      leftSide = (Util.nextGaussian(random, mean: 0, sigma: upperBound * 1.0)).floor();
+
+      // get the right side number
+      rightSide = result - leftSide;
       return;
     }
 
     if (widget.operators & Operators.subtraction == 0) {
       operator <<= 1; // not valid operator
     } else if (operator == Operators.subtraction) {
+      // generate random number to be the left side
+      leftSide = random.nextInt(upperBound - lowerBound) + lowerBound + 1;
+      
+      // generate a random number to be the right side
+      rightSide = random.nextInt(upperBound - lowerBound) + lowerBound + 1;
+
+      // if right > left, swap sides
+      if (rightSide > leftSide) {
+        final temp = rightSide;
+        rightSide = leftSide;
+        leftSide = temp;
+      }
+
       result = leftSide - rightSide;
       return;
     }
@@ -83,21 +104,26 @@ class _ArithmeticPageState extends State<ArithmeticPage> {
     if (widget.operators & Operators.multiplication == 0) {
       operator <<= 1; // not valid operator
     } else if (operator == Operators.multiplication) {
-      result = leftSide * rightSide;
+
+      // generate random number to be the result
+      result = random.nextInt(upperBound - lowerBound) + lowerBound + 1;
+      // get its factors
+      List<int> factors = Util.getFactors(result);
+      // pick a random factor
+      leftSide = factors[random.nextInt(factors.length)];
+      rightSide = result ~/ leftSide;
       return;
     }
 
     if (operator == Operators.division) {
-      
-      int divisor = random.nextInt(upperBound);
-      int maxQuotient = upperBound ~/ divisor;
-      int quotient = random.nextInt(maxQuotient);
-      int dividend = divisor * quotient;
 
-      rightSide = divisor;
-      leftSide = dividend;
-      result = quotient;
-      
+      // generate numerator in range
+      leftSide = random.nextInt(upperBound - lowerBound) + lowerBound + 1;
+      // get its factors
+      List<int> factors = Util.getFactors(leftSide);
+      // pick one factor at random
+      rightSide = factors[random.nextInt(factors.length)];
+      result = leftSide ~/ rightSide;
       return;
     }
 
@@ -120,41 +146,57 @@ class _ArithmeticPageState extends State<ArithmeticPage> {
   }
 
   void updateBounds() {
-    // lowerBound += widget.increment;
-    upperBound += widget.increment;
+    lowerBound += widget.increment;
+    final diff = (upperBound * 1.5).round();
+    if (diff > widget.increment) {
+      upperBound = (upperBound * 1.5).round();
+    } else {
+      upperBound += widget.increment;
+
+    }
   }
 
   void wrongAnswerVibrate() async {
 
-    await HapticFeedback.vibrate();
+    await HapticFeedback.heavyImpact();
 
     for (int i = 0; i < 2; i++) {
       await Future.delayed(Duration(milliseconds: 250));
-      await HapticFeedback.vibrate();
+      await HapticFeedback.heavyImpact();
     }
     
   }
 
-  void evaluateAnswer() {
+  bool evaluateAnswer() {
 
     int? num = int.tryParse(_controller.text);
+
     
     if (num == null || num != result) {
-      wrongAnswerVibrate();
+      return false;
     }
 
     if (num == result) {
-      updateBounds();
-      createNewProblem();
-      _controller.clear();
-      setState((){});
-      HapticFeedback.heavyImpact();
+      return true;
     }
 
-    
+    return false;
   }
 
-  final TextEditingController _controller = TextEditingController(); 
+  void processSubmission() {
+
+    if (evaluateAnswer()) {
+      _controller.clear();
+      updateBounds();
+      createNewProblem();
+      setState((){});
+      HapticFeedback.heavyImpact();
+    } else {
+      wrongAnswerVibrate();
+    }
+  }
+
+  final TextEditingController _controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -165,6 +207,7 @@ class _ArithmeticPageState extends State<ArithmeticPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -180,13 +223,25 @@ class _ArithmeticPageState extends State<ArithmeticPage> {
                 signed: true,
               ),
             ),
+            ConstrainedBox(constraints: BoxConstraints(maxHeight: 50), child: Container(height: double.infinity)),
             ElevatedButton(
-              onPressed: evaluateAnswer, 
+              onPressed: processSubmission,
+              style: ButtonStyle(
+                overlayColor: WidgetStateProperty.resolveWith<Color>((states) {
+                  if (states.contains(WidgetState.pressed)) {
+                    if (evaluateAnswer()) {
+                      return Colors.green.withValues(alpha: 0.6);
+                    }
+                    return Colors.red.withValues(alpha: 0.6);
+                  }
+                  return Colors.grey;
+                })
+              ),
               child: SizedBox(
                 width: double.infinity,
                 child: Center(child:Text("Submit"))
               )
-            )
+            ),
           ]
         )
       )

@@ -60,21 +60,9 @@ class _MyHomePageState extends State<MyHomePage> {
             
             Tile(
               title: "addition",
-              increment: 10,
-              rounds: -1,
-              operators: Operators.addition,
-            ),
-            Tile(
-              title: "addition",
               increment: 5,
               rounds: -1,
               operators: Operators.addition,
-            ),
-            Tile(
-              title: "subtraction",
-              increment: 10,
-              rounds: -1,
-              operators: Operators.subtraction,
             ),
             Tile(
               title: "subtraction",
@@ -84,33 +72,33 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Tile(
               title: "multiplication",
-              increment: 10,
+              increment: 5,
               rounds: -1,
               operators: Operators.multiplication,
             ),
             Tile(
               title: "division",
-              increment: 10,
+              increment: 5,
               rounds: -1,
               operators: Operators.division,
             ),
 
             Tile(
               title: "addition, subtraction",
-              increment: 10,
+              increment: 5,
               rounds: -1,
               operators: Operators.addition | Operators.subtraction,
             ),
             Tile(
               title: "multiplication, division",
-              increment: 10,
+              increment: 5,
               rounds: -1,
               operators: Operators.multiplication | Operators.division,
             ),
 
             Tile(
               title: "all 4",
-              increment: 10,
+              increment: 5,
               rounds: -1,
               operators: Operators.addition | Operators.subtraction | Operators.multiplication | Operators.division,
             ),
