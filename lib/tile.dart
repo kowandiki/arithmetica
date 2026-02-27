@@ -51,6 +51,10 @@ class Tile extends StatelessWidget {
               operators: operators,
               inputTermLowerBound: inputTermLowerBound,
               inputTermUpperBound: inputTermUpperBound,
+              increment: increment,
+              startingLowerBound: startingLowerBound,
+              startingUpperBound: startingUpperBound,
+              upperBoundScaleFactor: upperBoundScaleFactor,
             )
           )
 

@@ -107,11 +107,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
             Tile(
               title: "12x12 times table",
-              increment: 10,
+              increment: 0,
               rounds: -1,
               operators: Operators.multiplication,
               inputTermLowerBound: 1,
               inputTermUpperBound: 12,
+              startingUpperBound: 200,
+              startingLowerBound: 1,
             ),
             
           ]

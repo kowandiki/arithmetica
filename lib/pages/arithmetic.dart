@@ -108,6 +108,7 @@ class _ArithmeticPageState extends State<ArithmeticPage> {
     // then go through that list until you find a result with a pair of factors within the LHS range
 
     List<int> numbers = List.generate(upperBound - lowerBound + 1, (i) => lowerBound + i);
+    numbers.sort((a, b) => Comparable.compare(a,b));
     numbers.shuffle(random);
 
     bool exitLoop = false;
