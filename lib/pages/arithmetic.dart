@@ -101,9 +101,50 @@ class _ArithmeticPageState extends State<ArithmeticPage> {
     ((i >> 3) & 1);
   }
 
+  void createMultiplicationProblem() {
+
+    // prioritize that the LHS be within range instead of the RHS if there are no combinations possible to get into the RHS
+    // to do this, create a list of all numbers within the RHS range, randomize the order
+    // then go through that list until you find a result with a pair of factors within the LHS range
+
+    List<int> numbers = List.generate(upperBound - lowerBound + 1, (i) => lowerBound + i);
+    numbers.shuffle(random);
+
+    bool exitLoop = false;
+    for (int i in numbers) {
+      List<int> factors = Util.getFactors(i, excludeOnes: true);
+      factors.shuffle(random);
+
+      for (int factor in factors) {
+        if (widget.inputTermLowerBound != null && factor < widget.inputTermLowerBound!) {
+          break;
+        }
+        if (widget.inputTermUpperBound != null && factor > widget.inputTermUpperBound!) {
+          break;
+        }
+
+        int pair = i ~/ factor;
+        if (widget.inputTermLowerBound != null && pair < widget.inputTermLowerBound!) {
+          break;
+        }
+        if (widget.inputTermUpperBound != null && pair > widget.inputTermUpperBound!) {
+          break;
+        }
+
+        leftSide = factor;
+        rightSide = pair;
+        result = i;
+        exitLoop = true;
+      }
+      if (exitLoop) {
+        break;
+      }
+    }
+  }
+
   void createNewProblem() {
     operator = 1 << random.nextInt(popcount(widget.operators));
-
+    
     if (widget.operators & Operators.addition == 0) {
       operator <<= 1; // not valid operator
     } else if (operator == Operators.addition) {
@@ -142,18 +183,7 @@ class _ArithmeticPageState extends State<ArithmeticPage> {
       operator <<= 1; // not valid operator
     } else if (operator == Operators.multiplication) {
 
-      // generate random number to be the result
-      result = random.nextInt(upperBound - lowerBound) + lowerBound + 1;
-      // get its factors
-      List<int> factors = Util.getFactors(result);
-      // pick a random factor
-      if (factors.length > 1) {
-        leftSide = factors[random.nextInt(factors.length - 1) + 1];
-      } else {
-        leftSide = factors[0];
-      }
-      
-      rightSide = result ~/ leftSide;
+      createMultiplicationProblem();
       return;
     }
 
@@ -270,6 +300,7 @@ class _ArithmeticPageState extends State<ArithmeticPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            Expanded(child: Container(),),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -287,6 +318,7 @@ class _ArithmeticPageState extends State<ArithmeticPage> {
               ),
             ),
             Expanded(child: Container(),),
+
             ElevatedButton(
               onPressed: processSubmission,
               style: ButtonStyle(

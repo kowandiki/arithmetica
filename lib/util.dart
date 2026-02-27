@@ -42,14 +42,19 @@ class Util {
     return val;
   }
 
-  static List<int> getFactors(int n) {
+  static List<int> getFactors(int n, {bool excludeOnes = false}) {
 
     List<int> factors = [];
 
-    for (int i = 1; i <= n ~/ 2; i++) {
+    for (int i = excludeOnes ? 2 : 1; i <= n ~/ 2; i++) {
       if (n % i == 0) {
         factors.add(i);
       }
+    }
+
+    // if the number is prime 1 is the only factor so add it back in if excludeOnes caused it to not be added
+    if (factors.isEmpty) {
+      factors.add(1);
     }
 
     return factors;

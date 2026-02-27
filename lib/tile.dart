@@ -9,6 +9,8 @@ class Tile extends StatelessWidget {
   final int operators;
   final int startingUpperBound;
   final int startingLowerBound;
+  final int? inputTermLowerBound;
+  final int? inputTermUpperBound;
 
   final double? upperBoundScaleFactor; // how much faster the upper bound should scale than the lower bound
   const Tile({
@@ -19,7 +21,9 @@ class Tile extends StatelessWidget {
     required this.operators, 
     this.startingUpperBound = 20,
     this.startingLowerBound = 1,
-    this.upperBoundScaleFactor,
+    this.upperBoundScaleFactor, 
+    this.inputTermLowerBound, 
+    this.inputTermUpperBound,
   });
 
 
@@ -43,7 +47,11 @@ class Tile extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute<void>(
-            builder: (context) => ArithmeticPage(operators: operators,)
+            builder: (context) => ArithmeticPage(
+              operators: operators,
+              inputTermLowerBound: inputTermLowerBound,
+              inputTermUpperBound: inputTermUpperBound,
+            )
           )
 
         );

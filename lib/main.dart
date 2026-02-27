@@ -96,11 +96,22 @@ class _MyHomePageState extends State<MyHomePage> {
               operators: Operators.multiplication | Operators.division,
             ),
 
+            
+
             Tile(
               title: "all 4",
               increment: 5,
               rounds: -1,
               operators: Operators.addition | Operators.subtraction | Operators.multiplication | Operators.division,
+            ),
+
+            Tile(
+              title: "12x12 times table",
+              increment: 10,
+              rounds: -1,
+              operators: Operators.multiplication,
+              inputTermLowerBound: 1,
+              inputTermUpperBound: 12,
             ),
             
           ]
