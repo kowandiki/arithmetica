@@ -13,14 +13,43 @@ class Operators {
   static const division = 0x8;
 }
 
+/// Page for generating and testing the user with basic arithmetic operations (addition, subtraction, multiplication, and division). <br>
+/// This page will automatically exit if the [targetValue] is reached, or if the upper and lower bounds equal.
 class ArithmeticPage extends StatefulWidget {
 
+  /// A bit vector representing which operators should be used when generating problems. <br>
+  /// Multiple operators can be used simultaneously by bitwise ORing the operator bytes as defined in [Operators]
   final int operators;
+  /// lowerBound is used in determining the RHS value in addition and multiplication, and the LHS values in subtraction and division
   final int startingLowerBound;
+  /// upperBound is used in determining the RHS value in addition and multiplication, and the LHS values in subtraction and division
   final int startingUpperBound;
+  /// the amount the upper and lower bounds change by after each successful problem completion
   final int increment;
-  /// If this value is not null, [increment] is ignored
+  /// must be greater than or equal to [lowerBoundScaleFactor], or [lowerBoundScaleFactor] must be null. <br>
+  /// Will increase the upper bound by [increment] or [upperBoundScaleFactor], whichever has a greater magnitude. <br>
+  /// if [null], [increment] is used for scaling the upper bound
   final double? upperBoundScaleFactor;
+  /// this value must be less than or equal to the [upperBoundScaleFactor]<br>
+  /// Will increase the lower bound by [increment] or [lowerBoundScaleFactor], whichever has a greater magnitude.<br>
+  /// if null, [increment] is used for scaling the lower bound, regardless of if [upperBoundScaleFactor] is set
+  final double? lowerBoundScaleFactor;
+  /// Intended for use where the upperBound should stay within a fixed range
+  final int? upperBoundCap;
+  /// Intended for use where the lowerBound should stay within a fixed range
+  final int? lowerBoundCap;
+
+  /// Intended for use where the terms should stay within a fixed range
+  final int? inputTermUpperBound;
+  /// Intended for use where the terms should stay within a fixed range
+  final int? inputTermLowerBound;
+  /// When set, the LHS will always contain this value
+  final int? startingValue;
+  /// when the target value is reached as an RHS value, the page will pop
+  /// This is primarily intended for countdowns to zero, or count ups to a specific value like for mimicing darts 
+  final int? targetValue;
+
+  final bool allowNegatives;
 
   const ArithmeticPage({
     super.key, 
@@ -28,7 +57,15 @@ class ArithmeticPage extends StatefulWidget {
     this.startingLowerBound = 1,
     this.startingUpperBound = 20,
     this.increment = 10,
-    this.upperBoundScaleFactor,
+    this.upperBoundScaleFactor, 
+    this.lowerBoundScaleFactor, 
+    this.upperBoundCap, 
+    this.lowerBoundCap, 
+    this.inputTermUpperBound, 
+    this.inputTermLowerBound, 
+    this.startingValue,
+    this.targetValue,
+    this.allowNegatives = false,
   });
 
   @override
@@ -39,6 +76,9 @@ class _ArithmeticPageState extends State<ArithmeticPage> {
 
   int lowerBound = 0;
   int upperBound = 0;
+  int? startingValue;
+  int? targetValue;
+
   int leftSide = 0;
   int rightSide = 0;
   int result = 0;
@@ -63,9 +103,6 @@ class _ArithmeticPageState extends State<ArithmeticPage> {
 
   void createNewProblem() {
     operator = 1 << random.nextInt(popcount(widget.operators));
-
-    leftSide = random.nextInt(upperBound - lowerBound) + lowerBound + 1;
-    rightSide = random.nextInt(upperBound - lowerBound) + lowerBound + 1;
 
     if (widget.operators & Operators.addition == 0) {
       operator <<= 1; // not valid operator
@@ -127,7 +164,11 @@ class _ArithmeticPageState extends State<ArithmeticPage> {
       // get its factors
       List<int> factors = Util.getFactors(leftSide);
       // pick one factor at random
-      rightSide = factors[random.nextInt(factors.length)];
+      if (factors.length > 1) {
+        rightSide = factors[random.nextInt(factors.length - 1) + 1];
+      } else {
+        rightSide = factors[0];
+      }
       result = leftSide ~/ rightSide;
       return;
     }
@@ -151,13 +192,26 @@ class _ArithmeticPageState extends State<ArithmeticPage> {
   }
 
   void updateBounds() {
-    lowerBound += widget.increment;
-    final diff = (upperBound * 1.5).round();
-    if (diff > widget.increment) {
-      upperBound = (upperBound * 1.5).round();
-    } else {
-      upperBound += widget.increment;
 
+    int lowerBoundDiff = widget.lowerBoundScaleFactor == null ? 0 : (lowerBound * widget.lowerBoundScaleFactor!).round();
+    if (lowerBoundDiff < widget.increment) {
+      lowerBoundDiff = widget.increment;
+    }
+    // make sure the lowerBound doesn't go over the lowerBoundCap if set
+    if (widget.lowerBoundCap != null && lowerBound + lowerBoundDiff > widget.lowerBoundCap!) {
+      lowerBound = widget.lowerBoundCap!;
+    } else {
+      lowerBound += lowerBoundDiff;
+    }
+
+    int upperBoundDiff = widget.upperBoundScaleFactor == null ? 0 : (upperBound * widget.upperBoundScaleFactor!).round();
+    if (upperBoundDiff < widget.increment) {
+      upperBoundDiff = widget.increment;
+    }
+    if (widget.upperBoundCap != null && upperBound + upperBoundDiff > widget.upperBoundCap!) {
+      upperBound = widget.upperBoundCap!;
+    } else {
+      upperBound += upperBoundDiff;
     }
   }
 
@@ -182,6 +236,10 @@ class _ArithmeticPageState extends State<ArithmeticPage> {
     }
 
     if (num == result) {
+
+      if (num == widget.targetValue) {
+        Navigator.pop(context);
+      }
       return true;
     }
 
@@ -228,7 +286,7 @@ class _ArithmeticPageState extends State<ArithmeticPage> {
                 signed: true,
               ),
             ),
-            ConstrainedBox(constraints: BoxConstraints(maxHeight: 50), child: Container(height: double.infinity)),
+            Expanded(child: Container(),),
             ElevatedButton(
               onPressed: processSubmission,
               style: ButtonStyle(
