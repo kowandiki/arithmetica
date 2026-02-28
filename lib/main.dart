@@ -1,3 +1,4 @@
+import 'package:arithmetica/settings/arithmetic_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:arithmetica/pages/arithmetic.dart';
 import 'package:arithmetica/tile.dart';
@@ -42,7 +43,8 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
 
-    
+    ArithmeticSettings test = ArithmeticSettings(operators: 1);
+    test.inputTermLowerBound;
 
     return Scaffold(
       appBar: AppBar(
@@ -60,60 +62,74 @@ class _MyHomePageState extends State<MyHomePage> {
             
             Tile(
               title: "addition",
-              increment: 5,
-              rounds: -1,
-              operators: Operators.addition,
+              problemSetSettings: ArithmeticSettings(
+                operators: Operators.addition,
+                lowerBoundIncrement: 5,
+                upperBoundIncrement: 5,
+              ),
             ),
             Tile(
               title: "subtraction",
-              increment: 5,
-              rounds: -1,
-              operators: Operators.subtraction,
+              problemSetSettings: ArithmeticSettings(
+                operators: Operators.subtraction,
+                lowerBoundIncrement: 5,
+                upperBoundIncrement: 5,
+              ),
             ),
             Tile(
               title: "multiplication",
-              increment: 5,
-              rounds: -1,
-              operators: Operators.multiplication,
+              problemSetSettings: ArithmeticSettings(
+                operators: Operators.multiplication,
+                lowerBoundIncrement: 5,
+                upperBoundIncrement: 5,
+              ),
             ),
             Tile(
               title: "division",
-              increment: 5,
-              rounds: -1,
-              operators: Operators.division,
+              problemSetSettings: ArithmeticSettings(
+                operators: Operators.division,
+                lowerBoundIncrement: 5,
+                upperBoundIncrement: 5,
+              ),
             ),
 
             Tile(
-              title: "addition, subtraction",
-              increment: 5,
-              rounds: -1,
-              operators: Operators.addition | Operators.subtraction,
+              title: "addition, subtraction\n5increment",
+              problemSetSettings: ArithmeticSettings(
+                operators: Operators.addition | Operators.subtraction,
+                lowerBoundIncrement: 5,
+                upperBoundIncrement: 5,
+              ),
             ),
             Tile(
-              title: "multiplication, division",
-              increment: 5,
-              rounds: -1,
-              operators: Operators.multiplication | Operators.division,
+              title: "multiplication, division\n5 increment", 
+              problemSetSettings: ArithmeticSettings(
+                operators: Operators.multiplication | Operators.division,
+                lowerBoundIncrement: 5,
+                upperBoundIncrement: 5,
+              ),
             ),
 
             
 
             Tile(
               title: "all 4",
-              increment: 5,
-              rounds: -1,
-              operators: Operators.addition | Operators.subtraction | Operators.multiplication | Operators.division,
+              problemSetSettings: ArithmeticSettings(
+                operators: Operators.addition | Operators.subtraction | Operators.multiplication | Operators.division,
+                lowerBoundIncrement: 5,
+                upperBoundIncrement: 5,
+              ),
             ),
 
             Tile(
               title: "12x12 times table",
-              increment: 0,
-              rounds: -1,
-              operators: Operators.multiplication,
-              inputTermLowerBound: 1,
-              inputTermUpperBound: 12,
-              startingUpperBound: 200,
-              startingLowerBound: 1,
+              problemSetSettings: ArithmeticSettings(
+                operators: Operators.multiplication,
+                inputTermLowerBound: 1,
+                inputTermUpperBound: 12,
+                outputTermLowerBound: 1,
+                outputTermUpperBound: 200,
+              ),
             ),
             
           ]

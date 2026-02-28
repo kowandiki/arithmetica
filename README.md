@@ -1,16 +1,27 @@
-# arithmetica
+# Arithmetica
 
-A new Flutter project.
+Arithmetica is an app designed to help train mental arithmetic skills through repeated exposure to simple but increasingly difficult questions.
 
-## Getting Started
+It aims to gamify these math problems to make engaging with it both fun and helpful.
 
-This project is a starting point for a Flutter application.
+## Usage
 
-A few resources to get you started if this is your first Flutter project:
+Select a game/problem set on the main page to be presented with questions of that type. Answers can be typed into the text box in the center of the page and a new question will be generated after a correct answer is submitted.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Planned Features
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- The ability to create custom problem sets 
+- Memory sequence games
+- Memory pattern matching games
+- More complex problem set options
+  - Matrix operations
+  - Cumulative operations towards a goal (e.g. darts)
+  - Derivatives
+  - Integrals
+  - Algebra
+- Time restrictions to do as many problems within x seconds
+- Score keeping
+
+## Releases
+
+The app is still in early stages, and as a result releases will not be provided yet. Once a more complete version of the app is available, releases will be provided.

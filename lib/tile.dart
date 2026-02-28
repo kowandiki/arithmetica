@@ -1,29 +1,17 @@
 
+import 'package:arithmetica/settings/arithmetic_settings.dart';
+import 'package:arithmetica/settings/problem_set_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:arithmetica/pages/arithmetic.dart';
 
 class Tile extends StatelessWidget {
   final String title;
-  final int increment;
-  final int rounds;
-  final int operators;
-  final int startingUpperBound;
-  final int startingLowerBound;
-  final int? inputTermLowerBound;
-  final int? inputTermUpperBound;
+  final ProblemSetSettings problemSetSettings;
 
-  final double? upperBoundScaleFactor; // how much faster the upper bound should scale than the lower bound
   const Tile({
     super.key, 
     required this.title, 
-    required this.increment, 
-    required this.rounds, 
-    required this.operators, 
-    this.startingUpperBound = 20,
-    this.startingLowerBound = 1,
-    this.upperBoundScaleFactor, 
-    this.inputTermLowerBound, 
-    this.inputTermUpperBound,
+    required this.problemSetSettings
   });
 
 
@@ -48,13 +36,7 @@ class Tile extends StatelessWidget {
           context,
           MaterialPageRoute<void>(
             builder: (context) => ArithmeticPage(
-              operators: operators,
-              inputTermLowerBound: inputTermLowerBound,
-              inputTermUpperBound: inputTermUpperBound,
-              increment: increment,
-              startingLowerBound: startingLowerBound,
-              startingUpperBound: startingUpperBound,
-              upperBoundScaleFactor: upperBoundScaleFactor,
+              arithmeticSettings: problemSetSettings as ArithmeticSettings
             )
           )
 
@@ -63,7 +45,7 @@ class Tile extends StatelessWidget {
       child: Container(
         decoration: boxDecoration,
         padding: const EdgeInsets.all(10),
-        child: Center(child: Text("$title\n$increment increment", textAlign: TextAlign.center,),)
+        child: Center(child: Text(title, textAlign: TextAlign.center,),)
       ),
     );
   }
