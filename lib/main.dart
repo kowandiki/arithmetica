@@ -64,32 +64,68 @@ class _MyHomePageState extends State<MyHomePage> {
               title: "addition",
               problemSetSettings: ArithmeticSettings(
                 operators: Operators.addition,
+                outputTermLowerBound: 1,
+                outputTermUpperBound: 5,
+                inputTermLowerBound: 1,
+                inputTermUpperBound: 20,
                 lowerBoundIncrement: 5,
                 upperBoundIncrement: 5,
+                lowerBoundScaleFactor: 1.05,
+                upperBoundScaleFactor: 1.05
+              ),
+            ),
+            Tile(
+              title: "addition input numbers 1-100",
+              problemSetSettings: ArithmeticSettings(
+                operators: Operators.addition,
+                inputTermLowerBound: 1,
+                inputTermUpperBound: 100,
+                lowerBoundIncrement: 0,
+                upperBoundIncrement: 0,
+              ),
+            ),
+            Tile(
+              title: "addition output numbers 100-1000",
+              problemSetSettings: ArithmeticSettings(
+                operators: Operators.addition,
+                outputTermLowerBound: 100,
+                outputTermUpperBound: 1000,
               ),
             ),
             Tile(
               title: "subtraction",
               problemSetSettings: ArithmeticSettings(
                 operators: Operators.subtraction,
+                outputTermLowerBound: 1,
+                outputTermUpperBound: 20,
                 lowerBoundIncrement: 5,
                 upperBoundIncrement: 5,
+                lowerBoundScaleFactor: 1.05,
+                upperBoundScaleFactor: 1.05,
               ),
             ),
             Tile(
               title: "multiplication",
               problemSetSettings: ArithmeticSettings(
                 operators: Operators.multiplication,
+                outputTermLowerBound: 1,
+                outputTermUpperBound: 20,
                 lowerBoundIncrement: 5,
                 upperBoundIncrement: 5,
+                lowerBoundScaleFactor: 1.05,
+                upperBoundScaleFactor: 1.05,
               ),
             ),
             Tile(
               title: "division",
               problemSetSettings: ArithmeticSettings(
                 operators: Operators.division,
+                outputTermLowerBound: 1,
+                outputTermUpperBound: 20,
                 lowerBoundIncrement: 5,
                 upperBoundIncrement: 5,
+                lowerBoundScaleFactor: 1.05,
+                upperBoundScaleFactor: 1.05,
               ),
             ),
 
@@ -97,16 +133,24 @@ class _MyHomePageState extends State<MyHomePage> {
               title: "addition, subtraction\n5increment",
               problemSetSettings: ArithmeticSettings(
                 operators: Operators.addition | Operators.subtraction,
+                outputTermLowerBound: 1,
+                outputTermUpperBound: 20,
                 lowerBoundIncrement: 5,
                 upperBoundIncrement: 5,
+                lowerBoundScaleFactor: 1.05,
+                upperBoundScaleFactor: 1.05,
               ),
             ),
             Tile(
               title: "multiplication, division\n5 increment", 
               problemSetSettings: ArithmeticSettings(
                 operators: Operators.multiplication | Operators.division,
+                outputTermLowerBound: 1,
+                outputTermUpperBound: 20,
                 lowerBoundIncrement: 5,
                 upperBoundIncrement: 5,
+                lowerBoundScaleFactor: 1.05,
+                upperBoundScaleFactor: 1.05,
               ),
             ),
 
@@ -116,8 +160,12 @@ class _MyHomePageState extends State<MyHomePage> {
               title: "all 4",
               problemSetSettings: ArithmeticSettings(
                 operators: Operators.addition | Operators.subtraction | Operators.multiplication | Operators.division,
+                outputTermLowerBound: 1,
+                outputTermUpperBound: 20,
                 lowerBoundIncrement: 5,
                 upperBoundIncrement: 5,
+                lowerBoundScaleFactor: 1.05,
+                upperBoundScaleFactor: 1.05,
               ),
             ),
 
@@ -125,8 +173,19 @@ class _MyHomePageState extends State<MyHomePage> {
               title: "12x12 times table",
               problemSetSettings: ArithmeticSettings(
                 operators: Operators.multiplication,
-                inputTermLowerBound: 1,
+                inputTermLowerBound: 2,
                 inputTermUpperBound: 12,
+                outputTermLowerBound: 1,
+                outputTermUpperBound: 200,
+              ),
+            ),
+
+            Tile(
+              title: "15x15 times table",
+              problemSetSettings: ArithmeticSettings(
+                operators: Operators.multiplication,
+                inputTermLowerBound: 2,
+                inputTermUpperBound: 15,
                 outputTermLowerBound: 1,
                 outputTermUpperBound: 200,
               ),

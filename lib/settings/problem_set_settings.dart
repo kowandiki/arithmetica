@@ -24,7 +24,7 @@ abstract class ProblemSetSettings {
   final int? inputTermUpperBound;
   /// Intended for use where the terms should stay within a fixed range
   final int? inputTermLowerBound;
-  /// When set, the LHS will always contain this value
+  /// When set, this is the starting point for reaching the [targetValue]. If [targetValue] is not set, the LHS will always contain this term
   final int? startingValue;
   /// when the target value is reached as an RHS value, the page will pop
   /// This is primarily intended for countdowns to zero, or count ups to a specific value like for mimicing darts 
