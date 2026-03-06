@@ -1,6 +1,7 @@
 
 import 'dart:math';
 
+import 'package:arithmetica/feistel_generator.dart';
 import 'package:arithmetica/settings/arithmetic_settings.dart';
 import 'package:arithmetica/util.dart';
 import 'package:flutter/material.dart';
@@ -78,46 +79,115 @@ class _ArithmeticPageState extends State<ArithmeticPage> {
     ((i >> 3) & 1);
   }
 
-  void createMultiplicationProblem() {
+  void createProblemGeneric(Function(int, int) operator, Function(int, int) inverse) {
 
-    // prioritize that the LHS be within range instead of the RHS if there are no combinations possible to get into the RHS
-    // to do this, create a list of all numbers within the RHS range, randomize the order
-    // then go through that list until you find a result with a pair of factors within the LHS range
+    if (inputTermUpperBound != null) {
+      
 
-    List<int> numbers = List.generate(outputTermUpperBound! - outputTermLowerBound! + 1, (i) => outputTermLowerBound! + i);
-    numbers.sort((a, b) => Comparable.compare(a,b));
-    numbers.shuffle(random);
+      FeistelGenerator fg = FeistelGenerator(inputTermUpperBound! - inputTermLowerBound! + 1);
+      
+      // allocate list for the numbers
+      // then as each number is generated, add it to the list
+      // and just add num-1 and num, see if its valid
 
-    bool exitLoop = false;
-    for (int i in numbers) {
-      List<int> factors = Util.getFactors(i, excludeOnes: true);
-      factors.shuffle(random);
+      // do this until all numbers have been generated. If still no valid combos, double for loop like before
+      // should give a question fairly quickly in most cases
+      List<int> numbers = [];
 
-      for (int factor in factors) {
-        if (inputTermLowerBound != null && factor < inputTermLowerBound!) {
-          break;
-        }
-        if (inputTermUpperBound != null && factor > inputTermUpperBound!) {
-          break;
-        }
+      int counter = 0;
 
-        int pair = i ~/ factor;
-        if (inputTermLowerBound != null && pair < inputTermLowerBound!) {
-          break;
-        }
-        if (inputTermUpperBound != null && pair > inputTermUpperBound!) {
-          break;
+      for (int i in fg.next()) {
+        counter++;
+        int n = i + outputTermLowerBound!;
+
+        numbers.add(n);
+
+        if (numbers.length < 2) {
+          continue;
         }
 
-        leftSide = factor;
-        rightSide = pair;
-        result = i;
-        exitLoop = true;
+        leftSide = numbers[numbers.length - 2];
+        rightSide = numbers[numbers.length - 1];
+        dynamic tempResult = operator(leftSide, rightSide);
+
+        // want to skip if operator is division and the left and right side are not factors
+        if (tempResult.floor() != tempResult.ceil()) {
+          debugPrint("Skipping $leftSide OP $rightSide because the result is not an integer");
+          continue;
+        }
+        result = tempResult.toInt();
+
+        if (result < 0) {
+          int temp = leftSide;
+          leftSide = rightSide;
+          rightSide = temp;
+          result = operator(leftSide, rightSide);
+        }
+
+        // check if valid
+        if (result > outputTermLowerBound! && (outputTermUpperBound == null || result < outputTermUpperBound!)) {
+          debugPrint("Found a result in $counter iterations");
+          debugPrint("$leftSide OP $rightSide = $result");
+          return;
+        }
       }
-      if (exitLoop) {
-        break;
+
+      // go through the list and check all possible combinations
+      debugPrint("Checking all possible combinations");
+      for (int i = 0; i < numbers.length; i++) {
+        for (int j = numbers.length - 1; j > 0; j--) {
+          leftSide = numbers[i];
+          rightSide = numbers[j];
+          result = operator(leftSide, rightSide);
+          if (result < 0) {
+            int temp = leftSide;
+            leftSide = rightSide;
+            rightSide = temp;
+            result = operator(leftSide, rightSide);
+          }
+          if (result > outputTermLowerBound! && (outputTermUpperBound == null || result < outputTermUpperBound!)) {
+            return;
+          }
+        }
+      }
+      return;
+    }
+
+    // go through all numbers in the output term bounds
+    // outputTermUpperBound is not null, since inputTermUpperBound is null
+    FeistelGenerator fg = FeistelGenerator(outputTermUpperBound! - outputTermLowerBound! + 1);
+    int counter = 0;
+    for (result in fg.next()) {
+      result += outputTermLowerBound!; // make it range from [outputTermLowerBound -> outputTermUpperBound]
+      // generate an input number between inputTermLowerBound and result
+
+      // this check makes it possible for no problem to ever be generated as it is
+      // will only happen in the case of bad bounds, and will show the previous question, or 0 OP 0
+      if (result < inputTermLowerBound!) {
+        continue;
+      }
+
+      // have the rightSide be biased more towards the left side of the distribution
+      // makes multiplication and division results more challenging while having a minimal impact on addition/subtraction
+      rightSide = Util.nextGaussian(random, sigma: (result - inputTermLowerBound!).toDouble(), skew: -2.0).floor() + inputTermLowerBound! + 1;
+
+      // rightSide = random.nextInt(result - inputTermLowerBound!) + inputTermLowerBound! + 1;
+      // get the other input number from the inverse of operator on result
+      leftSide = inverse(result, rightSide).round();
+      counter++;
+      // if the left side is still a valid input number, use it
+      if (leftSide > inputTermLowerBound!) {
+        // need to update result since leftSide got rounded
+        // technically can cause the result to go outside of the range, but relatively unlikely
+        // worth it for the reduced complexity
+        result = operator(leftSide, rightSide);
+        debugPrint("Found result after $counter/${outputTermUpperBound! - outputTermLowerBound! + 1} || $leftSide OP $rightSide = $result");
+        debugPrint("input term lower bound^ $inputTermLowerBound");
+        return;
       }
     }
+    result = operator(leftSide, rightSide);
+    debugPrint("did not find a valid result; using $leftSide OP $rightSide = $result");
   }
 
   void createNewProblem() {
@@ -127,92 +197,26 @@ class _ArithmeticPageState extends State<ArithmeticPage> {
     if (widget.arithmeticSettings.operators & Operators.addition == 0) {
       operator <<= 1; // not valid operator
     } else if (operator == Operators.addition) {
-
-      // need to find two numbers that add to be within the output term range (if possible)
-      // prioritize input term range
-      // maybe generate a list of all terms within the input term range, randomize the order
-      // then go through it from both ends adding the numbers until a result is in the output term range
-
-      // if input term upper bound is not set, need to generate the result first and generate input terms
-      if (inputTermUpperBound != null) {
-        List<int> numbers = List.generate(inputTermUpperBound! - inputTermLowerBound! + 1, (i) => outputTermLowerBound! + i);
-        numbers.sort((a, b) => Comparable.compare(a,b));
-        numbers.shuffle(random);
-
-        // go through the list
-        for (int i = 0; i < numbers.length; i++) {
-          for (int j = numbers.length - 1; j > 0; j--) {
-            leftSide = numbers[i];
-            rightSide = numbers[j];
-            result = leftSide + rightSide;
-            if (result > outputTermLowerBound! && (outputTermUpperBound == null || result < outputTermUpperBound!)) {
-              return;
-            }
-          }
-        }
-        return;
-      }
-      // input term upper bound is null, so generate the result first then the terms
-      // since the input term upper bound is null, the output term upper bound must not be null
-      // generate random number to be the result
-      result = random.nextInt(outputTermUpperBound! - outputTermLowerBound!) + outputTermLowerBound! + 1;
-
-      // generate one of the factors following a gaussian to be more heavily biased towards the center
-      leftSide = (Util.nextGaussian(random, mean: 0, sigma: result.toDouble())).floor() + inputTermLowerBound!;
-
-      // get the right side number
-      rightSide = result - leftSide;
-
-      if (rightSide < inputTermLowerBound!) {
-        // balance out as much as possible
-        rightSide = inputTermLowerBound!;
-        leftSide -= rightSide;
-        result = leftSide + rightSide;
-      }
+      createProblemGeneric((x,y) => x+y, (x,y) => x-y);
       return;
     }
 
     if (widget.arithmeticSettings.operators & Operators.subtraction == 0) {
       operator <<= 1; // not valid operator
     } else if (operator == Operators.subtraction) {
-      // generate random number to be the left side
-      leftSide = random.nextInt(outputTermUpperBound! - outputTermLowerBound!) + outputTermLowerBound! + 1;
-      
-      // generate a random number to be the right side
-      rightSide = random.nextInt(outputTermUpperBound! - outputTermLowerBound!) + outputTermLowerBound! + 1;
-
-      // if right > left, swap sides
-      if (rightSide > leftSide) {
-        final temp = rightSide;
-        rightSide = leftSide;
-        leftSide = temp;
-      }
-
-      result = leftSide - rightSide;
+      createProblemGeneric((x,y) => x-y, (x,y) => x+y);
       return;
     }
 
     if (widget.arithmeticSettings.operators & Operators.multiplication == 0) {
       operator <<= 1; // not valid operator
     } else if (operator == Operators.multiplication) {
-
-      createMultiplicationProblem();
+      createProblemGeneric((x,y) => x*y, (x,y) => x/y);
       return;
     }
 
     if (operator == Operators.division) {
-
-      // generate numerator in range
-      leftSide = random.nextInt(outputTermUpperBound! - outputTermLowerBound!) + outputTermLowerBound! + 1;
-      // get its factors
-      List<int> factors = Util.getFactors(leftSide);
-      // pick one factor at random
-      if (factors.length > 1) {
-        rightSide = factors[random.nextInt(factors.length - 1) + 1];
-      } else {
-        rightSide = factors[0];
-      }
-      result = leftSide ~/ rightSide;
+      createProblemGeneric((x,y) => x/y, (x,y) => x*y);
       return;
     }
 
@@ -247,8 +251,20 @@ class _ArithmeticPageState extends State<ArithmeticPage> {
       outputTermLowerBound = outputTermLowerBound! + lowerBoundDiff;
     }
 
-    int upperBoundDiff = widget.arithmeticSettings.upperBoundScaleFactor == null ? 0 : (outputTermUpperBound! * widget.arithmeticSettings.upperBoundScaleFactor!).round();
+    lowerBoundDiff = widget.arithmeticSettings.lowerBoundScaleFactor == null ? 0 : (inputTermLowerBound! * widget.arithmeticSettings.lowerBoundScaleFactor!).round();
+    if (widget.arithmeticSettings.lowerBoundIncrement != null && lowerBoundDiff < widget.arithmeticSettings.lowerBoundIncrement!) {
+      lowerBoundDiff = widget.arithmeticSettings.lowerBoundIncrement!;
+    }
+    // make sure the lowerBound doesn't go over the lowerBoundCap if set
+    if (widget.arithmeticSettings.lowerBoundCap != null && inputTermLowerBound! + lowerBoundDiff > widget.arithmeticSettings.lowerBoundCap!) {
+      inputTermLowerBound = widget.arithmeticSettings.lowerBoundCap!;
+    } else {
+      inputTermLowerBound = inputTermLowerBound! + lowerBoundDiff;
+    }
+
+    int upperBoundDiff;
     if (outputTermUpperBound != null) {
+      int upperBoundDiff = widget.arithmeticSettings.upperBoundScaleFactor == null ? 0 : (outputTermUpperBound! * widget.arithmeticSettings.upperBoundScaleFactor!).round();
       if (widget.arithmeticSettings.upperBoundIncrement != null && upperBoundDiff < widget.arithmeticSettings.upperBoundIncrement!) {
         upperBoundDiff = widget.arithmeticSettings.upperBoundIncrement!;
       }
@@ -259,8 +275,8 @@ class _ArithmeticPageState extends State<ArithmeticPage> {
       }
     }
 
-    upperBoundDiff = widget.arithmeticSettings.upperBoundScaleFactor == null ? 0 : (inputTermUpperBound! * widget.arithmeticSettings.upperBoundScaleFactor!).round();
     if (inputTermUpperBound != null) {
+      upperBoundDiff = widget.arithmeticSettings.upperBoundScaleFactor == null ? 0 : (inputTermUpperBound! * widget.arithmeticSettings.upperBoundScaleFactor!).round();
       if (widget.arithmeticSettings.upperBoundIncrement != null && upperBoundDiff < widget.arithmeticSettings.upperBoundIncrement!) {
         upperBoundDiff = widget.arithmeticSettings.upperBoundIncrement!;
       }
@@ -287,7 +303,6 @@ class _ArithmeticPageState extends State<ArithmeticPage> {
   bool evaluateAnswer() {
 
     int? num = int.tryParse(_controller.text);
-
     
     if (num == null || num != result) {
       return false;
@@ -305,7 +320,6 @@ class _ArithmeticPageState extends State<ArithmeticPage> {
   }
 
   void processSubmission() {
-
     if (evaluateAnswer()) {
       _controller.clear();
       updateBounds();

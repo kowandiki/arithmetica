@@ -65,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
               problemSetSettings: ArithmeticSettings(
                 operators: Operators.addition,
                 outputTermLowerBound: 1,
-                outputTermUpperBound: 5,
+                outputTermUpperBound: 20,
                 inputTermLowerBound: 1,
                 inputTermUpperBound: 20,
                 lowerBoundIncrement: 5,
@@ -98,21 +98,23 @@ class _MyHomePageState extends State<MyHomePage> {
                 operators: Operators.subtraction,
                 outputTermLowerBound: 1,
                 outputTermUpperBound: 20,
+                inputTermLowerBound: 1,
+                inputTermUpperBound: 20,
                 lowerBoundIncrement: 5,
                 upperBoundIncrement: 5,
                 lowerBoundScaleFactor: 1.05,
-                upperBoundScaleFactor: 1.05,
+                upperBoundScaleFactor: 1.05
               ),
             ),
             Tile(
               title: "multiplication",
               problemSetSettings: ArithmeticSettings(
                 operators: Operators.multiplication,
-                outputTermLowerBound: 1,
+                outputTermLowerBound: 5,
                 outputTermUpperBound: 20,
-                lowerBoundIncrement: 5,
+                lowerBoundIncrement: 0,
                 upperBoundIncrement: 5,
-                lowerBoundScaleFactor: 1.05,
+                lowerBoundScaleFactor: 1.04,
                 upperBoundScaleFactor: 1.05,
               ),
             ),
@@ -130,7 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
 
             Tile(
-              title: "addition, subtraction\n5increment",
+              title: "addition, subtraction\n5 increment",
               problemSetSettings: ArithmeticSettings(
                 operators: Operators.addition | Operators.subtraction,
                 outputTermLowerBound: 1,
