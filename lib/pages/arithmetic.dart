@@ -98,7 +98,7 @@ class _ArithmeticPageState extends State<ArithmeticPage> {
 
       for (int i in fg.next()) {
         counter++;
-        int n = i + outputTermLowerBound!;
+        int n = i + inputTermLowerBound!;
 
         numbers.add(n);
 
