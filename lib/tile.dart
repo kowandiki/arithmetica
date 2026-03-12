@@ -1,16 +1,16 @@
 
+import 'package:arithmetica/db/database_helper.dart';
 import 'package:arithmetica/settings/arithmetic_settings.dart';
 import 'package:arithmetica/settings/problem_set_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:arithmetica/pages/arithmetic.dart';
+import 'package:flutter/services.dart';
 
 class Tile extends StatelessWidget {
-  final String title;
   final ProblemSetSettings problemSetSettings;
 
   const Tile({
     super.key, 
-    required this.title, 
     required this.problemSetSettings
   });
 
@@ -42,10 +42,16 @@ class Tile extends StatelessWidget {
 
         );
       },
+      onLongPress: () {
+        // this should ideally open a dialog to edit or delete the tile. For now, just delete
+        DatabaseHelper.removeProblemSet(problemSetSettings.id);
+        HapticFeedback.heavyImpact();
+        // need a function callback to delete the widget and update state. For now, this is fine.
+      },
       child: Container(
         decoration: boxDecoration,
         padding: const EdgeInsets.all(10),
-        child: Center(child: Text(title, textAlign: TextAlign.center,),)
+        child: Center(child: Text(problemSetSettings.title, textAlign: TextAlign.center,),)
       ),
     );
   }

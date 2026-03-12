@@ -1,5 +1,9 @@
 
 abstract class ProblemSetSettings {
+  /// Unique ID representing the problem set
+  final int id;
+  /// Title of the problem set
+  final String title;
   /// lowerBound is used in determining the RHS value. Particularly important for addition and multiplication
   final int? outputTermLowerBound;
   /// upperBound is used in determining the RHS value. Particularly important for addition and multiplication
@@ -34,6 +38,8 @@ abstract class ProblemSetSettings {
   final bool allowNegativeOutputValues;
 
   ProblemSetSettings({
+    required this.id,
+    required this.title,
     this.inputTermUpperBound, 
     this.inputTermLowerBound, 
     this.outputTermUpperBound, 
@@ -49,4 +55,25 @@ abstract class ProblemSetSettings {
     this.allowNegativeInputValues = false,
     this.allowNegativeOutputValues = false,
   });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'title': title,
+      'inputTermUpperBound':    inputTermUpperBound,
+      'inputTermLowerBound':    inputTermLowerBound, 
+      'outputTermUpperBound':   outputTermUpperBound,
+      'outputTermLowerBound':   outputTermLowerBound,
+      'upperBoundIncrement':    upperBoundIncrement,
+      'lowerBoundIncrement':    lowerBoundIncrement,
+      'upperBoundScaleFactor':  upperBoundScaleFactor,
+      'lowerBoundScaleFactor':  lowerBoundScaleFactor,
+      'upperBoundCap':  upperBoundCap,
+      'lowerBoundCap':  lowerBoundCap,
+      'startingValue':  startingValue,
+      'targetValue':    targetValue,
+      'allowNegativeInputValues':   allowNegativeInputValues ? 1 : 0,
+      'allowNegativeOutputValues':  allowNegativeOutputValues ? 1 : 0
+    };
+  }
 }

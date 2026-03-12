@@ -8,6 +8,8 @@ class ArithmeticSettings extends ProblemSetSettings {
   final int operators;
 
   ArithmeticSettings({
+    required super.id,
+    required super.title,
     required this.operators,
     super.inputTermUpperBound, 
     super.inputTermLowerBound, 
@@ -24,4 +26,34 @@ class ArithmeticSettings extends ProblemSetSettings {
     super.allowNegativeInputValues = false,
     super.allowNegativeOutputValues = false,
   }) : super();
+
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      ...super.toMap(),
+      'operators': operators
+    };
+  }
+  
+  static ProblemSetSettings fromMap(Map<String, dynamic> map) {
+    return ArithmeticSettings(
+      id: map['id'],
+      title: map['title'],
+      operators: map['operators'] ?? 0,
+      inputTermUpperBound:  map['inputTermUpperBound'],
+      inputTermLowerBound:  map['inputTermLowerBound'],
+      outputTermLowerBound: map['outputTermLowerBound'],
+      outputTermUpperBound: map['outputTermUpperBound'],
+      lowerBoundIncrement:  map['lowerBoundIncrement'],
+      upperBoundIncrement:  map['upperBoundIncrement'],
+      upperBoundScaleFactor: map['upperBoundScaleFactor'],
+      lowerBoundScaleFactor: map['lowerBoundScaleFactor'],
+      lowerBoundCap: map['lowerBoundCap'],
+      upperBoundCap: map['upperBoundCap'],
+      startingValue: map['startingValue'],
+      targetValue: map['targetValue'],
+      allowNegativeInputValues: map['allowNegativeInputValues'] == 1,
+      allowNegativeOutputValues: map['allowNegativeOutputValues'] == 1, 
+    );
+  }
 }
