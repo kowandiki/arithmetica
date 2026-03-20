@@ -61,6 +61,29 @@ class _ModifyProblemSetDialogState extends State<ModifyProblemSetDialog> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    if (widget.problemSetSettings != null) {
+      operators = (widget.problemSetSettings! as ArithmeticSettings).operators;
+      _titleController.text = widget.problemSetSettings!.title;
+      _inputTermLowerBoundController.text = widget.problemSetSettings!.inputTermLowerBound != null ? "${widget.problemSetSettings!.inputTermLowerBound}" : "";
+      _inputTermUpperBoundController.text = widget.problemSetSettings!.inputTermUpperBound != null ? "${widget.problemSetSettings!.inputTermUpperBound}" : "";
+      _outputTermLowerBoundController.text = widget.problemSetSettings!.outputTermLowerBound != null ? "${widget.problemSetSettings!.outputTermLowerBound}" : "";
+      _outputTermUpperBoundController.text = widget.problemSetSettings!.outputTermUpperBound != null ? "${widget.problemSetSettings!.outputTermUpperBound}" : "";
+      _upperBoundIncrementController.text = widget.problemSetSettings!.upperBoundIncrement != null ? "${widget.problemSetSettings!.upperBoundIncrement}" : "";
+      _lowerBoundIncrementController.text = widget.problemSetSettings!.lowerBoundIncrement != null ? "${widget.problemSetSettings!.lowerBoundIncrement}" : "";
+      _upperBoundScaleFactorController.text = widget.problemSetSettings!.upperBoundScaleFactor != null ? "${widget.problemSetSettings!.upperBoundScaleFactor}" : "";
+      _lowerBoundScaleFactorController.text = widget.problemSetSettings!.lowerBoundScaleFactor != null ? "${widget.problemSetSettings!.lowerBoundScaleFactor}" : "";
+      _upperBoundCapController.text = widget.problemSetSettings!.upperBoundCap != null ? "${widget.problemSetSettings!.upperBoundCap}" : "";
+      _lowerBoundCapController.text = widget.problemSetSettings!.lowerBoundCap != null ? "${widget.problemSetSettings!.lowerBoundCap}" : "";
+      _startingValueController.text = widget.problemSetSettings!.startingValue != null ? "${widget.problemSetSettings!.startingValue}" : "";
+      _targetValueController.text = widget.problemSetSettings!.targetValue != null ? "${widget.problemSetSettings!.targetValue!}" : "";
+      
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Dialog(
       child: Padding(
@@ -102,29 +125,29 @@ class _ModifyProblemSetDialogState extends State<ModifyProblemSetDialog> {
                 )
               ]
             ),
-            TextField(controller: _inputTermLowerBoundController,
-              decoration: InputDecoration(labelText: "Input Term Lower Bound")),
-            TextField(controller: _inputTermUpperBoundController,
+            TextField(controller: _inputTermLowerBoundController, keyboardType: TextInputType.numberWithOptions(decimal: false),
+              decoration: InputDecoration(labelText: "Input Term Lower Bound"), ),
+            TextField(controller: _inputTermUpperBoundController, keyboardType: TextInputType.numberWithOptions(decimal: false),
               decoration: InputDecoration(labelText: "Input Term Upper Bound")),
-            TextField(controller: _outputTermLowerBoundController,
+            TextField(controller: _outputTermLowerBoundController, keyboardType: TextInputType.numberWithOptions(decimal: false),
               decoration: InputDecoration(labelText: "Output Term Lower Bound")),
-            TextField(controller: _outputTermUpperBoundController,
+            TextField(controller: _outputTermUpperBoundController, keyboardType: TextInputType.numberWithOptions(decimal: false),
               decoration: InputDecoration(labelText: "Output Term Upper Bound")),
-            TextField(controller: _lowerBoundIncrementController,
+            TextField(controller: _lowerBoundIncrementController, keyboardType: TextInputType.numberWithOptions(decimal: false),
               decoration: InputDecoration(labelText: "Lower Bound Increment")),
-            TextField(controller: _upperBoundIncrementController,
+            TextField(controller: _upperBoundIncrementController, keyboardType: TextInputType.numberWithOptions(decimal: false),
               decoration: InputDecoration(labelText: "Upper Bound Increment")),
-            TextField(controller: _lowerBoundScaleFactorController,
+            TextField(controller: _lowerBoundScaleFactorController, keyboardType: TextInputType.numberWithOptions(decimal: false),
               decoration: InputDecoration(labelText: "Lower Bound Scale Factor")),
-            TextField(controller: _upperBoundScaleFactorController,
+            TextField(controller: _upperBoundScaleFactorController, keyboardType: TextInputType.numberWithOptions(decimal: false),
               decoration: InputDecoration(labelText: "Upper Bound Scale Factor")),
-            TextField(controller: _lowerBoundCapController,
+            TextField(controller: _lowerBoundCapController, keyboardType: TextInputType.numberWithOptions(decimal: false),
               decoration: InputDecoration(labelText: "Lower Bound Cap")),
-            TextField(controller: _upperBoundCapController,
+            TextField(controller: _upperBoundCapController, keyboardType: TextInputType.numberWithOptions(decimal: false),
               decoration: InputDecoration(labelText: "Upper Bound Cap")),
-            TextField(controller: _startingValueController,
+            TextField(controller: _startingValueController, keyboardType: TextInputType.numberWithOptions(decimal: false),
               decoration: InputDecoration(labelText: "Starting Value")),
-            TextField(controller: _targetValueController,
+            TextField(controller: _targetValueController, keyboardType: TextInputType.numberWithOptions(decimal: false),
               decoration: InputDecoration(labelText: "Target Value")),
             
             
