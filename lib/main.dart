@@ -1,8 +1,8 @@
 import 'package:arithmetica/db/database_helper.dart';
 import 'package:arithmetica/settings/arithmetic_settings.dart';
+import 'package:arithmetica/widgets/modify_problem_set_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:arithmetica/pages/arithmetic.dart';
-import 'package:arithmetica/tile.dart';
+import 'package:arithmetica/widgets/tile.dart';
 
 void main() {
   runApp(const MyApp());
@@ -41,13 +41,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _operatorsController = TextEditingController();
-  final TextEditingController _inputTermUpperBoundController = TextEditingController();
-  final TextEditingController _inputTermLowerBoundController = TextEditingController();
-  final TextEditingController _outputTermUpperBoundController = TextEditingController();
-  final TextEditingController _outputTermLowerBoundController = TextEditingController();
-
   void createNewProblemSet(ArithmeticSettings settings) async {
 
     debugPrint("${await DatabaseHelper.getAllProblemSets()}");
@@ -75,6 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
     problemSets.add(
       Tile(
         problemSetSettings: newSettings,
+        deleteTile: deleteTile,
       )
     );
 
@@ -87,148 +81,26 @@ class _MyHomePageState extends State<MyHomePage> {
     debugPrint("new problem set added to the db");
   }
 
-  Dialog createNewProblemDialog() {
-    return Dialog(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(controller: _titleController, 
-              decoration: InputDecoration(hintText: "Title"),),
-            TextField(controller: _operatorsController, 
-              decoration: InputDecoration(hintText: "Operators num, 1=+,2=-,4=*,8=/"), 
-              keyboardType: TextInputType.numberWithOptions(decimal: false),),
-            TextField(controller: _inputTermUpperBoundController, 
-              decoration: InputDecoration(hintText: "input term upper bound"),
-              keyboardType: TextInputType.numberWithOptions(decimal: false),),
-            TextField(controller: _inputTermLowerBoundController, 
-            decoration: InputDecoration(hintText: "input term lower bound"),
-            keyboardType: TextInputType.numberWithOptions(decimal: false),),
-            TextField(controller: _outputTermUpperBoundController, 
-            decoration: InputDecoration(hintText: "output term upper bound"),
-            keyboardType: TextInputType.numberWithOptions(decimal: false),),
-            TextField(controller: _outputTermLowerBoundController, 
-            decoration: InputDecoration(hintText: "output term lower bound"),
-            keyboardType: TextInputType.numberWithOptions(decimal: false),),
-            ElevatedButton(
-              child: Text("Create Problem Set"),
-              onPressed: () {
+  void deleteTile(int? id) {
+    // find tile with matching id and remove it from the list
+    // remove problem set from db
+    if (id == null) {
+      return;
+    }
 
-                ArithmeticSettings settings = ArithmeticSettings(
-                  id: -1,
-                  title: _titleController.text.isEmpty ? "New Problem Set" : _titleController.text,
-                  operators: int.tryParse(_operatorsController.text) ?? 0,
-                  inputTermLowerBound: int.tryParse(_inputTermLowerBoundController.text),
-                  inputTermUpperBound: int.tryParse(_inputTermUpperBoundController.text),
-                  outputTermLowerBound: int.tryParse(_outputTermLowerBoundController.text),
-                  outputTermUpperBound: int.tryParse(_outputTermUpperBoundController.text),
-                );
+    for (int i = 0; i < problemSets.length; i++) {
+      if (problemSets[i].problemSetSettings.id != null && problemSets[i].problemSetSettings.id! == id) {
+        problemSets.removeAt(i);
+        break;
+      }
+    }
+    DatabaseHelper.removeProblemSet(id);
 
-                createNewProblemSet(settings);
-                
-                Navigator.pop(context);
-              },
-            )
-          ]
-        )
-      )
-    );
+    setState((){});
   }
 
-  List<Tile> problemSets = 
-  [
-    Tile(
-      problemSetSettings: ArithmeticSettings(
-        id: -1,
-        title: "addition",
-        operators: Operators.addition,
-        outputTermLowerBound: 1,
-        outputTermUpperBound: 20,
-        inputTermLowerBound: 1,
-        inputTermUpperBound: 20,
-        lowerBoundIncrement: 5,
-        upperBoundIncrement: 5,
-        lowerBoundScaleFactor: 1.05,
-        upperBoundScaleFactor: 1.05
-      ),
-    ),
-    Tile(
-      problemSetSettings: ArithmeticSettings(
-        id: 1,
-        title: "addition input numbers 1-100",
-        operators: Operators.addition,
-        inputTermLowerBound: 1,
-        inputTermUpperBound: 100,
-        lowerBoundIncrement: 0,
-        upperBoundIncrement: 0,
-      ),
-    ),
-    Tile(
-      problemSetSettings: ArithmeticSettings(
-        id: 2,
-        title: "subtraction",
-        operators: Operators.subtraction,
-        outputTermLowerBound: 1,
-        outputTermUpperBound: 20,
-        inputTermLowerBound: 1,
-        inputTermUpperBound: 20,
-        lowerBoundIncrement: 5,
-        upperBoundIncrement: 5,
-        lowerBoundScaleFactor: 1.05,
-        upperBoundScaleFactor: 1.05
-      ),
-    ),
-    Tile(
-      problemSetSettings: ArithmeticSettings(
-        id: 3,
-        title: "multiplication",
-        operators: Operators.multiplication,
-        outputTermLowerBound: 5,
-        outputTermUpperBound: 20,
-        lowerBoundIncrement: 0,
-        upperBoundIncrement: 5,
-        lowerBoundScaleFactor: 1.04,
-        upperBoundScaleFactor: 1.05,
-      ),
-    ),
-    Tile(
-      problemSetSettings: ArithmeticSettings(
-        id: 4,
-        title: "division",
-        operators: Operators.division,
-        outputTermLowerBound: 1,
-        outputTermUpperBound: 20,
-        lowerBoundIncrement: 5,
-        upperBoundIncrement: 5,
-        lowerBoundScaleFactor: 1.05,
-        upperBoundScaleFactor: 1.05,
-      ),
-    ),
-    Tile(
-      problemSetSettings: ArithmeticSettings(
-        id: 5,
-        title: "12x12 times table",
-        operators: Operators.multiplication,
-        inputTermLowerBound: 2,
-        inputTermUpperBound: 12,
-        outputTermLowerBound: 1,
-        outputTermUpperBound: 200,
-      ),
-    ),
-
-    Tile(
-      problemSetSettings: ArithmeticSettings(
-        id: 6,
-        title: "15x15 times table",
-        operators: Operators.multiplication,
-        inputTermLowerBound: 2,
-        inputTermUpperBound: 15,
-        outputTermLowerBound: 1,
-        outputTermUpperBound: 200,
-      ),
-    ),
-  ];
+  List<Tile> problemSets = [];
+  
 
   final BoxDecoration boxDecoration = BoxDecoration(
     color: Colors.white,
@@ -249,12 +121,16 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
   
     addNewProblemSet = GestureDetector(
-      onTap: () {
+      onTap: () async {
         debugPrint("$problemSets");
-        showDialog(
+        final result = await showDialog(
           context: context,
-          builder: (BuildContext context) => createNewProblemDialog()
+          builder: (BuildContext context) => ModifyProblemSetDialog()
         );
+
+        if (result != null) {
+          createNewProblemSet(result!);
+        }
       },
       child: Container(
         decoration: boxDecoration,
@@ -265,11 +141,17 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
 
+    problemSets = [
+      // 
+    ];
+
     loadProblemSetsFromDB();
+
+    
   }
 
   void loadProblemSetsFromDB() async {
-    problemSets += (await DatabaseHelper.getAllProblemSets()).map((e) => Tile(problemSetSettings: e)).toList();
+    problemSets += (await DatabaseHelper.getAllProblemSets()).map((e) => Tile(problemSetSettings: e, deleteTile: deleteTile,)).toList();
 
     setState((){});
   }

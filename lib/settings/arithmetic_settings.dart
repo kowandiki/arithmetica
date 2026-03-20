@@ -2,6 +2,14 @@
 
 import 'package:arithmetica/settings/problem_set_settings.dart';
 
+/// bitwise OR these operators together to get more types of operands on the Arithmetic Page
+class Operators {
+  static const addition = 0x1;
+  static const subtraction = 0x2;
+  static const multiplication = 0x4;
+  static const division = 0x8;
+}
+
 class ArithmeticSettings extends ProblemSetSettings {
   /// A bit vector representing which operators should be used when generating problems. <br>
   /// Multiple operators can be used simultaneously by bitwise ORing the operator bytes as defined in [Operators]

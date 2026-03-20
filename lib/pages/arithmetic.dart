@@ -7,13 +7,7 @@ import 'package:arithmetica/util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-/// bitwise OR these operators together to get more types of operands on the Arithmetic Page
-class Operators {
-  static const addition = 0x1;
-  static const subtraction = 0x2;
-  static const multiplication = 0x4;
-  static const division = 0x8;
-}
+
 
 /// Page for generating and testing the user with basic arithmetic operations (addition, subtraction, multiplication, and division). <br>
 /// This page will automatically exit if the [targetValue] is reached, or if the upper and lower bounds equal.

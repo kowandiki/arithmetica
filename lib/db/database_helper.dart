@@ -7,6 +7,7 @@ import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
   static final String problemSetsTable = "problem_sets";
+  static final String flagTable = "flags";
   static final String databaseName = "arithmetica.db";
   static String? databasePath;
   static Database? db;
@@ -14,7 +15,12 @@ class DatabaseHelper {
   static Future<void> init() async {
     DatabaseHelper.databasePath = await getDatabasesPath();
     DatabaseHelper.db = await openDatabase("$databasePath/$databaseName");
+
     await createTables();
+
+    if (await DatabaseHelper.getMaxProblemSetId() == 0) {
+      await DatabaseHelper.insertInitialProblemSets();
+    }
   }
 
   static Future<void> createTables() async {
@@ -27,7 +33,7 @@ class DatabaseHelper {
       CREATE TABLE IF NOT EXISTS $problemSetsTable (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-        title TEXT,
+        title TEXT NOT NULL,
 
         operators INTEGER,
 
@@ -69,6 +75,87 @@ class DatabaseHelper {
     if (db == null) {
       await DatabaseHelper.init();
     }
+    insertProblemSet(ArithmeticSettings(
+      id: 0,
+      title: "addition",
+      operators: Operators.addition,
+      outputTermLowerBound: 1,
+      outputTermUpperBound: 20,
+      inputTermLowerBound: 1,
+      inputTermUpperBound: 20,
+      lowerBoundIncrement: 5,
+      upperBoundIncrement: 5,
+      lowerBoundScaleFactor: 1.05,
+      upperBoundScaleFactor: 1.05
+    ));
+
+    insertProblemSet(ArithmeticSettings(
+      id: 1,
+      title: "addition input numbers 1-100",
+      operators: Operators.addition,
+      inputTermLowerBound: 1,
+      inputTermUpperBound: 100,
+      lowerBoundIncrement: 0,
+      upperBoundIncrement: 0,
+    ));
+
+    insertProblemSet(ArithmeticSettings(
+      id: 2,
+      title: "subtraction",
+      operators: Operators.subtraction,
+      outputTermLowerBound: 1,
+      outputTermUpperBound: 20,
+      inputTermLowerBound: 1,
+      inputTermUpperBound: 20,
+      lowerBoundIncrement: 5,
+      upperBoundIncrement: 5,
+      lowerBoundScaleFactor: 1.05,
+      upperBoundScaleFactor: 1.05
+    ));
+
+    insertProblemSet(ArithmeticSettings(
+      id: 3,
+      title: "multiplication",
+      operators: Operators.multiplication,
+      outputTermLowerBound: 5,
+      outputTermUpperBound: 20,
+      lowerBoundIncrement: 0,
+      upperBoundIncrement: 5,
+      lowerBoundScaleFactor: 1.04,
+      upperBoundScaleFactor: 1.05,
+    ));
+
+    insertProblemSet(ArithmeticSettings(
+      id: 4,
+      title: "division",
+      operators: Operators.division,
+      outputTermLowerBound: 1,
+      outputTermUpperBound: 20,
+      lowerBoundIncrement: 5,
+      upperBoundIncrement: 5,
+      lowerBoundScaleFactor: 1.05,
+      upperBoundScaleFactor: 1.05,
+    ));
+
+    insertProblemSet(ArithmeticSettings(
+      id: 5,
+      title: "12x12 times table",
+      operators: Operators.multiplication,
+      inputTermLowerBound: 2,
+      inputTermUpperBound: 12,
+      outputTermLowerBound: 1,
+      outputTermUpperBound: 200,
+    ));
+
+    insertProblemSet(ArithmeticSettings(
+      id: 6,
+      title: "15x15 times table",
+      operators: Operators.multiplication,
+      inputTermLowerBound: 2,
+      inputTermUpperBound: 15,
+      outputTermLowerBound: 1,
+      outputTermUpperBound: 200,
+    ));
 
   }
 

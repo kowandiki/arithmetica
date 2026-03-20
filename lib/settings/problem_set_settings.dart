@@ -1,7 +1,7 @@
 
 abstract class ProblemSetSettings {
   /// Unique ID representing the problem set
-  final int id;
+  final int? id;
   /// Title of the problem set
   final String title;
   /// lowerBound is used in determining the RHS value. Particularly important for addition and multiplication
