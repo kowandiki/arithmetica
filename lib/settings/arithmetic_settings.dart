@@ -31,7 +31,6 @@ class ArithmeticSettings extends ProblemSetSettings {
     super.lowerBoundCap, 
     super.startingValue, 
     super.targetValue, 
-    super.allowNegativeInputValues = false,
     super.allowNegativeOutputValues = false,
   }) : super();
 
@@ -60,7 +59,6 @@ class ArithmeticSettings extends ProblemSetSettings {
       upperBoundCap: map['upperBoundCap'],
       startingValue: map['startingValue'],
       targetValue: map['targetValue'],
-      allowNegativeInputValues: map['allowNegativeInputValues'] == 1,
       allowNegativeOutputValues: map['allowNegativeOutputValues'] == 1, 
     );
   }

@@ -55,7 +55,6 @@ class DatabaseHelper {
         startingValue INTEGER,
         targetValue INTEGER,
 
-        allowNegativeInputValues INTEGER NOT NULL,
         allowNegativeOutputValues INTEGER NOT NULL
       )
     ''');

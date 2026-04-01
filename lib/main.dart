@@ -43,8 +43,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void createNewProblemSet(ArithmeticSettings settings) async {
 
-    debugPrint("${await DatabaseHelper.getAllProblemSets()}");
-
     int id = await DatabaseHelper.getMaxProblemSetId() + 1;
     ArithmeticSettings newSettings = ArithmeticSettings(id: id, 
       title: settings.title, 
@@ -61,7 +59,6 @@ class _MyHomePageState extends State<MyHomePage> {
       lowerBoundCap: settings.lowerBoundCap, 
       startingValue: settings.startingValue, 
       targetValue: settings.targetValue, 
-      allowNegativeInputValues: settings.allowNegativeInputValues,
       allowNegativeOutputValues: settings.allowNegativeOutputValues,
     );
 
@@ -123,6 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
   
     addNewProblemSet = GestureDetector(
       onTap: () async {
+        // await DatabaseHelper.clearTables();
         debugPrint("$problemSets");
         final result = await showDialog(
           context: context,

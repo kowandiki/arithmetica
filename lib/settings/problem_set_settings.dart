@@ -34,7 +34,6 @@ abstract class ProblemSetSettings {
   /// This is primarily intended for countdowns to zero, or count ups to a specific value like for mimicing darts 
   final int? targetValue;
 
-  final bool allowNegativeInputValues;
   final bool allowNegativeOutputValues;
 
   ProblemSetSettings({
@@ -52,7 +51,6 @@ abstract class ProblemSetSettings {
     this.lowerBoundCap, 
     this.startingValue, 
     this.targetValue, 
-    this.allowNegativeInputValues = false,
     this.allowNegativeOutputValues = false,
   });
 
@@ -72,7 +70,6 @@ abstract class ProblemSetSettings {
       'lowerBoundCap':  lowerBoundCap,
       'startingValue':  startingValue,
       'targetValue':    targetValue,
-      'allowNegativeInputValues':   allowNegativeInputValues ? 1 : 0,
       'allowNegativeOutputValues':  allowNegativeOutputValues ? 1 : 0
     };
   }

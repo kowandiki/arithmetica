@@ -111,7 +111,7 @@ class _ArithmeticPageState extends State<ArithmeticPage> {
         }
         result = tempResult.toInt();
 
-        if (result < 0) {
+        if (result < 0 && !widget.arithmeticSettings.allowNegativeOutputValues) {
           int temp = leftSide;
           leftSide = rightSide;
           rightSide = temp;
@@ -119,7 +119,12 @@ class _ArithmeticPageState extends State<ArithmeticPage> {
         }
 
         // check if valid
-        if (result > outputTermLowerBound! && (outputTermUpperBound == null || result < outputTermUpperBound!)) {
+        if (
+          // if the output term lower bound is null, the bound used in calculations is 0 normally. This check makes it ignore that 0 if its null
+          ((widget.arithmeticSettings.allowNegativeOutputValues && widget.arithmeticSettings.outputTermLowerBound == null)
+            || result > outputTermLowerBound!) 
+          && (outputTermUpperBound == null || result < outputTermUpperBound!)
+        ) {
           debugPrint("Found a result in $counter iterations");
           debugPrint("$leftSide OP $rightSide = $result");
           return;

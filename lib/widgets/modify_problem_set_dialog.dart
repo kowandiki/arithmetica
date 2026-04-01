@@ -35,7 +35,6 @@ class _ModifyProblemSetDialogState extends State<ModifyProblemSetDialog> {
   final TextEditingController _targetValueController = TextEditingController();
 
   int operators = 0;
-  bool allowNegativeInputValues = false;
   bool allowNegativeOutputValues = false;
 
   ProblemSetSettings getSettingsFromFields() {
@@ -57,6 +56,7 @@ class _ModifyProblemSetDialogState extends State<ModifyProblemSetDialog> {
       lowerBoundCap: int.tryParse(_lowerBoundCapController.text),
       startingValue: int.tryParse(_startingValueController.text),
       targetValue: int.tryParse(_targetValueController.text),
+      allowNegativeOutputValues: allowNegativeOutputValues
     );
   }
 
@@ -79,12 +79,13 @@ class _ModifyProblemSetDialogState extends State<ModifyProblemSetDialog> {
       _lowerBoundCapController.text = widget.problemSetSettings!.lowerBoundCap != null ? "${widget.problemSetSettings!.lowerBoundCap}" : "";
       _startingValueController.text = widget.problemSetSettings!.startingValue != null ? "${widget.problemSetSettings!.startingValue}" : "";
       _targetValueController.text = widget.problemSetSettings!.targetValue != null ? "${widget.problemSetSettings!.targetValue!}" : "";
-      
+      allowNegativeOutputValues = widget.problemSetSettings!.allowNegativeOutputValues;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Dialog(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -149,17 +150,6 @@ class _ModifyProblemSetDialogState extends State<ModifyProblemSetDialog> {
               decoration: InputDecoration(labelText: "Starting Value")),
             TextField(controller: _targetValueController, keyboardType: TextInputType.numberWithOptions(decimal: false),
               decoration: InputDecoration(labelText: "Target Value")),
-            
-            
-
-            Text("Allow Negative Input values"),
-            Checkbox(
-              value: allowNegativeInputValues,
-              onChanged: (value) {
-                allowNegativeInputValues = !allowNegativeInputValues; 
-                setState((){});
-              }
-            ),
 
             Text("Allow Negative Output Values"),
             Checkbox(
