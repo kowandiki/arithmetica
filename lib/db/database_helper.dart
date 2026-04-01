@@ -188,6 +188,22 @@ class DatabaseHelper {
       await DatabaseHelper.init();
     }
 
+    final values = (settings as ArithmeticSettings).toMap();
+
+    values.remove("id");
+    values.removeWhere((key, value) => value == null);
+
+    if (values.isEmpty) {
+      return;
+    }
+
+    await db!.update(
+      problemSetsTable,
+      values,
+      where: 'id = ?',
+      whereArgs: [settings.id],
+    );
+
   }
 
   static Future<int> getMaxProblemSetId() async {

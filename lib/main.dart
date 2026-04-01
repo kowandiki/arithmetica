@@ -69,6 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
       Tile(
         problemSetSettings: newSettings,
         deleteTile: deleteTile,
+        replaceTile: replaceTile,
       )
     );
 
@@ -151,9 +152,30 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void loadProblemSetsFromDB() async {
-    problemSets += (await DatabaseHelper.getAllProblemSets()).map((e) => Tile(problemSetSettings: e, deleteTile: deleteTile,)).toList();
+    problemSets += (await DatabaseHelper.getAllProblemSets()).map((e) => Tile(problemSetSettings: e, deleteTile: deleteTile, replaceTile: replaceTile,)).toList();
 
     setState((){});
+  }
+
+  Future<bool> replaceTile(Tile oldTile, ArithmeticSettings newTile) async {
+    
+    for (int i = 0; i < problemSets.length; i++) {
+
+      if (problemSets[i] == oldTile) {
+        problemSets[i] = Tile(
+          problemSetSettings: newTile,
+          deleteTile: deleteTile,
+          replaceTile: replaceTile
+        );
+
+        await DatabaseHelper.updateProblemSet(newTile);
+
+        setState((){});
+        return true;
+      }
+    }
+
+    return false;
   }
 
   @override

@@ -9,11 +9,13 @@ import 'package:flutter/services.dart';
 class Tile extends StatelessWidget {
   final ProblemSetSettings problemSetSettings;
   final Function(int?) deleteTile;
+  final Function(Tile, ArithmeticSettings) replaceTile;
 
   const Tile({
     super.key, 
     required this.problemSetSettings,
     required this.deleteTile,
+    required this.replaceTile,
   });
 
 
@@ -54,6 +56,12 @@ class Tile extends StatelessWidget {
         
         if (result == -1) {
           deleteTile(problemSetSettings.id);
+          return;
+        }
+
+        if (result is ArithmeticSettings) {
+          replaceTile(this, result);
+          return;
         }
       },
       child: Container(
